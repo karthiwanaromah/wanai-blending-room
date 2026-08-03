@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Courgette&family=Oswald:wght@200..700&display=swap');
+@import "tailwindcss";
+
+
+.courgette-regular {
+  font-family: "Courgette", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.cinzel {
+  font-family: "Cinzel", serif;
+  font-optical-sizing: auto
+}
+
+body {
+  font-family: "Oswald", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  background-color: #fbfbf1;
+}
+
+.btn{
+  @apply  cursor-pointer bg-[#c49367] hover:bg-[#a07a53] text-white font-bold py-2 px-10 rounded disabled:opacity-50
+}
+
+.btn.dark{
+    @apply cursor-pointer bg-[#1b1b1b] hover:bg-[#111] text-white font-bold py-2 px-4 rounded disabled:opacity-50
+
+}
