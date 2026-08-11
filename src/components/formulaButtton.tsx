@@ -1,27 +1,8 @@
 // apps/web/src/components/FormulaDownloadButton.jsx
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { FormulaPDF } from "./formulaPdf";
+import { type Formula } from "../types/types.ts";
 
-type FormulaNote = {
-  id: string | number;
-  percentage?: number;
-  ml: number;
-  drops: number;
-  note: {
-    name: string;
-    layer: string;
-  };
-};
-
-type Formula = {
-  id: string | number;
-  bottleSizeMl: number;
-  totalConcentrateMl: number;
-  engineSource?: string;
-  reasoning?: string;
-  createdAt: string;
-  formulaNotes: FormulaNote[];
-};
 // `formula` is the exact object your API returns from
 // POST /api/formulas/generate or GET /api/formulas/:id
 export function FormulaDownloadButton({ formula }: { formula: Formula }) {

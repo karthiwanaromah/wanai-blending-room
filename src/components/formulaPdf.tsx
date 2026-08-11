@@ -16,6 +16,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+import type { Formula } from "../types/types";
 
 Font.register({
   family: "Times-Roman",
@@ -106,36 +107,9 @@ const styles = StyleSheet.create({
   },
 });
 
-type FormulaNote = {
-  id: string | number;
-  percentage?: number;
-  ml: number;
-  drops: number;
-  note: {
-    name: string;
-    layer: string;
-  };
-};
-
-type Formula = {
-  id: string | number;
-  bottleSizeMl: number;
-  totalConcentrateMl: number;
-  engineSource?: string;
-  reasoning?: string;
-  createdAt: string;
-  formulaNotes: FormulaNote[];
-};
-
 export function FormulaPDF({ formula }: { formula: Formula }) {
-  const {
-    id,
-    bottleSizeMl,
-    totalConcentrateMl,
-    reasoning,
-    formulaNotes,
-    createdAt,
-  } = formula;
+  const { id, bottleSizeMl, totalConcentrateMl, reasoning, notes, createdAt } =
+    formula;
 
   const formulaIdLabel = `FORMULA ID: WN-${new Date(createdAt).getFullYear()}-${String(id).padStart(4, "0")}`;
   const dateLabel = new Date(createdAt).toLocaleDateString("en-GB", {
@@ -164,9 +138,9 @@ export function FormulaPDF({ formula }: { formula: Formula }) {
 
         {/* formulaNotes is already ordered top -> middle -> base from
             generateFormula(), so no re-sorting needed here */}
-        {formulaNotes.map((fn) => (
+        {notes.map((fn) => (
           <View key={fn.id} style={styles.noteRow} wrap={false}>
-            <Text style={styles.noteName}>{fn.note.name}</Text>
+            <Text style={styles.noteName}>{fn.noteName}</Text>
             <Text style={styles.noteAmount}>
               {Number(fn.ml).toFixed(2)}ml · {fn.drops} drops
             </Text>

@@ -24,7 +24,7 @@ const router = createBrowserRouter([
     element: <IngredientsPage />,
   },
   {
-    path: "/formula",
+    path: "/formula/:id",
     element: <FormulaPage />,
   },
 ]);

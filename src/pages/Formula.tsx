@@ -1,62 +1,219 @@
 import { useEffect, useState } from "react";
-
-interface FormulaPageProps {
-  duration?: number; // milliseconds
-  onComplete?: () => void;
-}
+import { useParams } from "react-router-dom";
+import { socket } from "../services/socket.tsx";
+import { FormulaDownloadButton } from "../components/formulaButtton.tsx";
+import type { Formula } from "../types/types.ts";
 
 const socialLinks = [
   {
     name: "Instagram",
     icon: "📸",
-    url: "https://instagram.com/yourpage",
+    url: "https://instagram.com/wanaromah",
   },
   {
     name: "Facebook",
     icon: "📘",
-    url: "https://facebook.com/yourpage",
+    url: "https://facebook.com/wanaromah",
   },
   {
     name: "YouTube",
     icon: "▶️",
-    url: "https://youtube.com/@yourpage",
+    url: "https://youtube.com/@wanaromah",
   },
   {
     name: "LinkedIn",
     icon: "💼",
-    url: "https://linkedin.com/company/yourpage",
+    url: "https://linkedin.com/company/wanaromah",
   },
 ];
 
-function FormulaPage({
-  duration = 10000, // Default 10 sec
-  onComplete,
-}: FormulaPageProps) {
+function FormulaPage() {
+  const { id } = useParams();
+  const [formula, setFormula] = useState<Formula | null>(null);
   const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Decrypt URL ID
+  const formulaId = id ? id : null;
+
+  // --------------------------------------------------
+  // Fetch formula
+  // --------------------------------------------------
+
+  const fetchFormula = async () => {
+    if (!formulaId) {
+      setError("Invalid formula URL");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/formula/${formulaId}/one`,
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch formula");
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormula(result.data);
+      } else {
+        setError(result.message || "Failed to load formula");
+      }
+    } catch (error) {
+      console.error("Failed to fetch formula:", error);
+      setError("Failed to load your formula");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial fetch
+  useEffect(() => {
+    fetchFormula();
+  }, [formulaId]);
+
+  // --------------------------------------------------
+  // Socket.IO
+  // --------------------------------------------------
 
   useEffect(() => {
+    if (!formulaId) return;
+
+    const handleFormulaApproved = (data: { formula: Formula }) => {
+      console.log("Formula approved event:", data);
+
+      // Make sure this event belongs to THIS formula
+      if (Number(data.formula.id) !== Number(formulaId)) {
+        return;
+      }
+
+      // Update immediately
+      setFormula(data.formula);
+
+      // Complete progress
+      setProgress(100);
+    };
+
+    socket.on("formula:approved", handleFormulaApproved);
+
+    return () => {
+      socket.off("formula:approved", handleFormulaApproved);
+    };
+  }, [formulaId]);
+
+  // --------------------------------------------------
+  // Progress animation
+  // --------------------------------------------------
+
+  useEffect(() => {
+    // Don't run progress if formula is already approved
+    if (formula?.status === "approved") {
+      setProgress(100);
+      return;
+    }
+
+    if (formula?.status !== "pending") {
+      return;
+    }
+
+    const duration = 10000;
     const interval = 50;
+
     const increment = (100 * interval) / duration;
 
     const timer = setInterval(() => {
       setProgress((prev) => {
-        const next = Math.min(prev + increment, 100);
-
-        if (next >= 100) {
-          clearInterval(timer);
-          onComplete?.();
-        }
+        // Don't reach 100 while waiting for approval
+        const next = Math.min(prev + increment, 95);
 
         return next;
       });
     }, interval);
 
     return () => clearInterval(timer);
-  }, [duration, onComplete]);
+  }, [formula?.status]);
+
+  // --------------------------------------------------
+  // Loading
+  // --------------------------------------------------
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading your formula...</p>
+      </div>
+    );
+  }
+
+  // --------------------------------------------------
+  // Error
+  // --------------------------------------------------
+
+  if (error || !formula) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">{error || "Formula not found"}</p>
+      </div>
+    );
+  }
+
+  // --------------------------------------------------
+  // APPROVED
+  // --------------------------------------------------
+
+  if (formula.status === "approved") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-xl w-full text-center">
+          <div className="text-5xl mb-6">✨</div>
+
+          <h1 className="text-3xl font-bold">
+            Your Signature Formula Is Ready
+          </h1>
+
+          <p className="text-gray-500 mt-3">
+            Your personalized fragrance formula has been carefully created and
+            approved.
+          </p>
+
+          <div className="mt-8">
+            <FormulaDownloadButton formula={formula} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --------------------------------------------------
+  // REJECTED
+  // --------------------------------------------------
+
+  if (formula.status === "rejected") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="max-w-xl text-center">
+          <h1 className="text-3xl font-bold">Formula Needs Revision</h1>
+
+          <p className="text-gray-500 mt-3">
+            Your formula is currently being revised. Please check again shortly.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // --------------------------------------------------
+  // PENDING
+  // --------------------------------------------------
 
   return (
-    <div className="min-h-screen  flex items-center justify-center p-6">
-      <div className="max-w-lg w-full">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="max-w-xl w-full">
         <h1 className="text-3xl font-bold text-center">
           Creating Your Signature Formula
         </h1>
@@ -70,13 +227,16 @@ function FormulaPage({
         <div className="mt-10">
           <div className="flex justify-between text-sm mb-2">
             <span>Preparing Formula...</span>
+
             <span>{Math.round(progress)}%</span>
           </div>
 
           <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-black transition-all duration-75"
-              style={{ width: `${progress}%` }}
+              style={{
+                width: `${progress}%`,
+              }}
             />
           </div>
         </div>
@@ -101,6 +261,7 @@ function FormulaPage({
 
               <div>
                 <p className="font-semibold">{social.name}</p>
+
                 <p className="text-sm text-gray-500">Follow us</p>
               </div>
             </a>
@@ -108,7 +269,7 @@ function FormulaPage({
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-8">
-          This usually takes a few seconds...
+          Your formula is being reviewed...
         </p>
       </div>
     </div>
