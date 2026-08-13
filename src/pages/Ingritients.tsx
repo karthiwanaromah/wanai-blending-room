@@ -21,7 +21,7 @@ const BOTTLE_SIZES = [55, 100];
 function IngredientsPage() {
   const [selectedNotes, setSelectedNotes] = useState<Notes[]>([]);
   const [allNotes, setAllNotes] = useState<Group[]>([]);
-  const [bottleSize, setBottleSize] = useState<number>(130);
+  const [bottleSize, setBottleSize] = useState<number>(100);
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(0);
@@ -481,7 +481,7 @@ function IngredientsPage() {
 
           <button
             type="button"
-            className="ml-auto flex min-w-[220px] items-center justify-center gap-3 rounded-full bg-[#171717] px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-black/15 transition-all hover:bg-[#292929] disabled:cursor-not-allowed disabled:opacity-40"
+            className="ml-auto flex min-w-55 items-center justify-center gap-3 rounded-full bg-[#171717] px-7 py-4 text-sm font-semibold text-white shadow-xl shadow-black/15 transition-all hover:bg-[#292929] disabled:cursor-not-allowed disabled:opacity-40"
             onClick={handleSubmit}
             disabled={submitting || selectedNotes.length === 0}
           >
