@@ -7,22 +7,22 @@ import type { Formula } from "../types/types.ts";
 const socialLinks = [
   {
     name: "Instagram",
-    icon: "../assets/insta.png",
+    icon: "/assets/insta.png",
     url: "https://instagram.com/wanaromah",
   },
   {
     name: "Facebook",
-    icon: "../assets/facebook.png",
+    icon: "/assets/facebook.png",
     url: "https://facebook.com/wanaromah",
   },
   {
     name: "YouTube",
-    icon: "../assets/youtube.png",
+    icon: "/assets/youtube.png",
     url: "https://youtube.com/@wanaromah",
   },
   {
     name: "LinkedIn",
-    icon: "../assets/linkedin.png",
+    icon: "/assets/linkedin.png",
     url: "https://linkedin.com/company/wanaromah",
   },
 ];
