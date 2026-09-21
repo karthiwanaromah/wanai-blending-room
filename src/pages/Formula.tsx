@@ -7,22 +7,22 @@ import type { Formula } from "../types/types.ts";
 const socialLinks = [
   {
     name: "Instagram",
-    icon: "📸",
+    icon: "../assets/insta.png",
     url: "https://instagram.com/wanaromah",
   },
   {
     name: "Facebook",
-    icon: "📘",
+    icon: "../assets/facebook.png",
     url: "https://facebook.com/wanaromah",
   },
   {
     name: "YouTube",
-    icon: "▶️",
+    icon: "../assets/youtube.png",
     url: "https://youtube.com/@wanaromah",
   },
   {
     name: "LinkedIn",
-    icon: "💼",
+    icon: "../assets/linkedin.png",
     url: "https://linkedin.com/company/wanaromah",
   },
 ];
@@ -257,7 +257,9 @@ function FormulaPage() {
               rel="noopener noreferrer"
               className="border rounded-xl p-4 hover:bg-gray-100 transition flex items-center gap-3"
             >
-              <span className="text-2xl">{social.icon}</span>
+              <span className="text-2xl">
+                <img src={social.icon} alt={social.name} className="w-6 h-6" />
+              </span>
 
               <div>
                 <p className="font-semibold">{social.name}</p>
