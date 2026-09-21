@@ -3,26 +3,30 @@ import { useParams } from "react-router-dom";
 import { socket } from "../services/socket.tsx";
 import { FormulaDownloadButton } from "../components/formulaButtton.tsx";
 import type { Formula } from "../types/types.ts";
+import Instagram from "../assets/insta.png";
+import Facebook from "../assets/facebook.png";
+import Youtube from "../assets/youtube.png";
+import Linkedin from "../assets/linkedin.png";
 
 const socialLinks = [
   {
     name: "Instagram",
-    icon: "/assets/insta.png",
+    icon: Instagram,
     url: "https://instagram.com/wanaromah",
   },
   {
     name: "Facebook",
-    icon: "/assets/facebook.png",
+    icon: Facebook,
     url: "https://facebook.com/wanaromah",
   },
   {
     name: "YouTube",
-    icon: "/assets/youtube.png",
+    icon: Youtube,
     url: "https://youtube.com/@wanaromah",
   },
   {
     name: "LinkedIn",
-    icon: "/assets/linkedin.png",
+    icon: Linkedin,
     url: "https://linkedin.com/company/wanaromah",
   },
 ];
